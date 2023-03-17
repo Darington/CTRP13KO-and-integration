@@ -1,4 +1,4 @@
-setwd('G:/My Drive/lab files/Will Wong/CTRP13/KO seq data/github analysis/')
+setwd('')
 
 library(reshape2)
 library(ggplot2)
@@ -16,11 +16,11 @@ library(GenomicFeatures)
 library(GenomicAlignments)
 library(BiocParallel)
 #start from raw counts
-counts_matrix = read.csv('./raw_data/full counts matrix CTRP13.csv')
+counts_matrix = read.csv('full counts matrix CTRP13.csv')
 row.names(counts_matrix) = counts_matrix$gene_symbol
 counts_matrix$gene_symbol = NULL
 counts_matrix$X=NULL
-ENS_ID = read.delim('./raw_data/MGI_all_gene_annot_with ENSMB.txt')
+ENS_ID = read.delim('MGI_all_gene_annot_with ENSMB.txt')
 counts_matrix$gene_symbol = ENS_ID$X3..marker.symbol[(match(row.names(counts_matrix), ENS_ID$X11..Ensembl.gene.id))]
 counts_matrix = counts_matrix[!duplicated(counts_matrix$gene_symbol),]
 counts_matrix = counts_matrix[!is.na(counts_matrix$gene_symbol),]
@@ -213,8 +213,8 @@ tissie_enrichments('Liver')
 ###############################################################
 #METSIM Analysis
 #read in metsim data
-metsim_genes = read.delim('raw_data/METSIM_trx_adipose.txt')
-metsim_clinical = read.delim('raw_data/METSIM_clinical.txt')
+metsim_genes = read.delim('METSIM_trx_adipose.txt')
+metsim_clinical = read.delim('METSIM_clinical.txt')
 sig_degs = res1[res1$P.Value<0.0005 & res1$tissue=='GWAT',]
 orths = read.delim('raw_data/Mouse Gene info with Human Orthologues.txt')
 sig_degs$human_orth = orths$human_orth[match(sig_degs$gene_symbol, orths$Symbol)]

@@ -213,8 +213,8 @@ tissie_enrichments('Liver')
 ###############################################################
 #METSIM Analysis
 #read in metsim data
-metsim_genes = read.delim('METSIM_trx_adipose.txt')
-metsim_clinical = read.delim('METSIM_clinical.txt')
+metsim_genes = read.delim('raw_data/METSIM_trx_adipose.txt')
+metsim_clinical = read.delim('raw_data/METSIM_clinical.txt')
 sig_degs = res1[res1$P.Value<0.0005 & res1$tissue=='GWAT',]
 orths = read.delim('raw_data/Mouse Gene info with Human Orthologues.txt')
 sig_degs$human_orth = orths$human_orth[match(sig_degs$gene_symbol, orths$Symbol)]
@@ -256,7 +256,7 @@ mm3 = mm3[row.names(mm3) %in% row.names(mm4),]
 cc1 = bicorAndPvalue(mm3, mm4, use = 'p')
 gset1 = melt(cc1$bicor)
 gset1$pvalue = melt(cc1$p)$value
-gset1 = gset1[gset1$pvalue<0.01 & gset1$value<0,]
+gset1 = gset1[gset1$pvalue<0.01 & gset1$value>0,]
 gset1 = na.omit(gset1)
 downreg_pos = as.vector(unique(gset1$Var1))
 
@@ -274,13 +274,17 @@ mm4$metsim_id=NULL
 mm3 = mm3[row.names(mm3) %in% row.names(mm4),]
 mm4 = mm4[row.names(mm4) %in% row.names(mm3),]
 
-cc1 = bicorAndPvalue(mm3, mm4, use = 'p')
+cc1 = bicorAndPvalue(mm4, mm3, use = 'p')
 cc2 = cc1$bicor
 cc2[is.na(cc2)] = 0
 tt4 = cc1$p
 tt4[is.na(tt4)] = 1
+tt3 = ifelse(tt4 < 0.01,"*","")
 
-#heatmap plot insert
+#plot composition correlation structure
+pdf(file = 'METSIM trait correlations C1QL3 up and downregulated DEGS.pdf')
+pheatmap(cc2, fontsize_number = 20, display_numbers = tt3, number_color = "black", color = colormap(colormap = colormaps$plasma, nshades = 50), main='METSIM trait correlation C1QL3 and downregulated DEGs', fontsize_row = 5, fontsize_col = 5)
+dev.off()
 
 
 
